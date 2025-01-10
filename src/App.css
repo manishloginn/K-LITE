@@ -1,0 +1,31 @@
+.App {
+  font-family: Arial, sans-serif;
+  width: 100vw;
+  
+}
+
+.main-container {
+  display: flex;
+  height: 100%;
+  /* border: 1px solid; */
+}
+
+
+.content-container {
+  /* width: calc(100% - 240px); */
+  width: 100vw;
+  height: 150px;
+  /* margin: auto; */
+  /* margin: 0; */
+  /* border: 1px solid; */
+}
+
+
+
+.dashboard-content {
+  /* padding: 20px; */
+  /* background-color: #ecf0f1; */
+  height: 100vh; 
+  overflow-y: auto;
+}
+

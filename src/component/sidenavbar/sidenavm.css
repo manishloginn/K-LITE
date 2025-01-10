@@ -1,0 +1,22 @@
+.sidenav {
+    /* display: none; */
+    width: 15vw;
+    margin-top: 55px;
+    height: 100vh;
+    display: flex;
+    /* align-items: center; */
+    /* border: 1px solid black; */
+
+    ul {
+        display: flex;
+        flex-direction: column;
+        /* border: 1px solid black; */
+        li{
+            display: flex;
+            /* justify-content: space-evenly; */
+            justify-content: flex-start;
+            align-items: center;
+            /* border: 1px solid black; */
+        }
+    }
+}
