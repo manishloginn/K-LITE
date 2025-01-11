@@ -16,6 +16,7 @@ const Endpoints = {
     sendotp:`${baseUrl}/send-otp`,
     verityotp:`${baseUrl}/verity-otp`,
     adminLogin:`${baseUrl}/adminLogin`,
+    addPermision:`${baseUrl}/add-permision`,
 }
 
 export default Endpoints
