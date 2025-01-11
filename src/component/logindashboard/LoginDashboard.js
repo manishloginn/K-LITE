@@ -40,13 +40,30 @@ const LoginDashboard = () => {
         setShowOptionsId(null);
     };
 
+    const handleSave = async () => {
+        try {
+            const response = await axios.post(`${Endpoints.editDoer}?id=${editingDoerId}`, editedDoer);
+            if (response.status === 200) {
+                setDoers((prevDoers) =>
+                    prevDoers.map((doer) =>
+                        doer._id === editingDoerId ? { ...doer, ...editedDoer } : doer
+                    )
+                );
+                notification.success({ message: 'Doer updated successfully!' });
+            }
+        } catch (error) {
+            notification.error({
+                message: error.response?.data?.message || 'Failed to update doer.',
+            });
+        }
+        setEditingDoerId(null);
+    };
+
     const handelPermision = (doer) => {
         setCurrentDoer(doer);
         setSelectedPermissions([]); 
         setPermissionModalVisible(true); 
     };
-
-    // console.log(selectedPermissions)
 
     const handlePermissionSubmit = async () => {
         try {
@@ -70,7 +87,7 @@ const LoginDashboard = () => {
         const confirmation = window.confirm('Are you sure you want to delete this doer?');
         if (confirmation) {
             try {
-                const response = await axios.delete(`${Endpoints.deleteDoer}?id=${id}`); // Change method to DELETE
+                const response = await axios.delete(`${Endpoints.deleteDoer}?id=${id}`);
                 if (response.status === 200) {
                     setDoers((prevDoers) => prevDoers.filter((doer) => doer._id !== id));
                     notification.success({ message: 'Doer deleted successfully!' });
@@ -82,7 +99,6 @@ const LoginDashboard = () => {
             }
         }
     };
-    
 
     return (
         <div className="mt-5">
@@ -106,38 +122,93 @@ const LoginDashboard = () => {
                             {doers.map((doer, index) => (
                                 <tr key={doer._id} className="hover:bg-blue-100">
                                     <td>{index + 1}</td>
-                                    <td>{doer.name}</td>
-                                    <td>{doer.email}</td>
-                                    <td>{doer.mobile || 'N/A'}</td>
+                                    <td>
+                                        {editingDoerId === doer._id ? (
+                                            <input
+                                                type="text"
+                                                value={editedDoer.name}
+                                                onChange={(e) =>
+                                                    setEditedDoer((prev) => ({
+                                                        ...prev,
+                                                        name: e.target.value,
+                                                    }))
+                                                }
+                                            />
+                                        ) : (
+                                            doer.name
+                                        )}
+                                    </td>
+                                    <td>
+                                        {editingDoerId === doer._id ? (
+                                            <input
+                                                type="email"
+                                                value={editedDoer.email}
+                                                onChange={(e) =>
+                                                    setEditedDoer((prev) => ({
+                                                        ...prev,
+                                                        email: e.target.value,
+                                                    }))
+                                                }
+                                            />
+                                        ) : (
+                                            doer.email
+                                        )}
+                                    </td>
+                                    <td>
+                                        {editingDoerId === doer._id ? (
+                                            <input
+                                                type="text"
+                                                value={editedDoer.mobile}
+                                                onChange={(e) =>
+                                                    setEditedDoer((prev) => ({
+                                                        ...prev,
+                                                        mobile: e.target.value,
+                                                    }))
+                                                }
+                                            />
+                                        ) : (
+                                            doer.mobile || 'N/A'
+                                        )}
+                                    </td>
                                     <td>{doer.lastlogin || 'N/A'}</td>
                                     <td className="relative">
-                                        <div
-                                            onClick={() => handelOptionClick(doer._id)}
-                                            className="bg-gray-300 w-fit flex justify-center items-center hover:cursor-pointer p-2 rounded"
-                                        >
-                                            <MoreVertOutlinedIcon style={{ color: 'white', fontSize: '20px' }} />
-                                        </div>
-                                        {showOptionsId === doer._id && (
-                                            <div className="options-container absolute top-full mt-2 bg-white shadow-lg rounded p-2 z-10">
-                                                <button
-                                                    onClick={() => handleEdit(doer)}
-                                                    className="option-btn"
+                                        {editingDoerId === doer._id ? (
+                                            <Button type="primary" onClick={handleSave}>
+                                                Save
+                                            </Button>
+                                        ) : (
+                                            <>
+                                                <div
+                                                    onClick={() => handelOptionClick(doer._id)}
+                                                    className="bg-gray-300 w-fit flex justify-center items-center hover:cursor-pointer p-2 rounded"
                                                 >
-                                                    Edit
-                                                </button>
-                                                <button
-                                                    onClick={() => handelPermision(doer)}
-                                                    className="option-btn"
-                                                >
-                                                    Permission
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(doer._id)}
-                                                    className="option-btn delete-btn"
-                                                >
-                                                    Delete
-                                                </button>
-                                            </div>
+                                                    <MoreVertOutlinedIcon
+                                                        style={{ color: 'white', fontSize: '20px' }}
+                                                    />
+                                                </div>
+                                                {showOptionsId === doer._id && (
+                                                    <div className="options-container absolute top-full mt-2 bg-white shadow-lg rounded p-2 z-10">
+                                                        <button
+                                                            onClick={() => handleEdit(doer)}
+                                                            className="option-btn"
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handelPermision(doer)}
+                                                            className="option-btn"
+                                                        >
+                                                            Permission
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDelete(doer._id)}
+                                                            className="option-btn delete-btn"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </>
                                         )}
                                     </td>
                                 </tr>
@@ -149,7 +220,6 @@ const LoginDashboard = () => {
                 )}
             </div>
 
-           
             <Modal
                 title={`Set Permissions for ${currentDoer?.name}`}
                 visible={isPermissionModalVisible}
